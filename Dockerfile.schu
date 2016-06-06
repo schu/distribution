@@ -1,0 +1,16 @@
+# Build with: `docker build -f Dockerfile.schu .`
+
+FROM golang:1.6-wheezy
+
+RUN mkdir -p /registry/bin
+
+RUN groupadd -r registry --gid=1000 && useradd -r -g registry --home /registry --uid=1000 registry
+
+COPY ./bin/ /registry/bin/
+COPY ./cmd/registry/config-dev.yml /registry/config.yml
+COPY ./cert-exoscale.pem /registry/
+
+WORKDIR /registry
+
+ENTRYPOINT ["/registry/bin/registry"]
+CMD ["serve", "/registry/config.yml"]
